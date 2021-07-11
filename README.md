@@ -4,5 +4,3 @@ Tomasz F, known as Pengwius hired me to create an operating system for him. This
 
 # Contributing
 Pull requests & issues are welcome!
-
-test
