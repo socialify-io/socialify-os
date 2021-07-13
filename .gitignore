@@ -1,0 +1,3 @@
+bootloader/boot.bin
+bootloader/boot.elf
+bootloader/boot.o
