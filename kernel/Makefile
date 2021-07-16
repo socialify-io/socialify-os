@@ -1,6 +1,3 @@
-
-kernel.bin : 
-	/usr/local/bin/nasm -f elf64 boot.S 
-	/usr/local/bin/nasm -f elf64 kernel.S 
-	x86_64-unknown-linux-gnu-ld -n -o kernel.bin -T linker.ld boot.o kernel.o
+create : 
+	/usr/local/bin/nasm -fbin kernel.S -o kernel.bin
 	qemu-system-x86_64 kernel.bin
