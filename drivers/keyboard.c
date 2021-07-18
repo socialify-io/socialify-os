@@ -13,8 +13,10 @@ typedef enum
 
 #define BACKSPACE 0x0E
 #define ENTER 0x1C
-#define LSHIFT 0x2A
 #define CAPSLOCK 0x3A
+
+#define LSHIFT_PUSH 0x2A
+#define LSHIFT_RELEASE LSHIFT_PUSH+0x80
 
 static char key_buffer[256];
 
@@ -46,7 +48,6 @@ static void keyboard_callback(registers_t regs) {
     /* The PIC leaves us the scancode in port 0x60 */
     u8 scancode = port_byte_in(0x60);
     
-    if (scancode > SC_MAX) return;
     if (scancode == BACKSPACE) {
         backspace(key_buffer);
         kprint_backspace();
@@ -55,6 +56,18 @@ static void keyboard_callback(registers_t regs) {
         user_input(key_buffer); /* kernel-controlled function */
         key_buffer[0] = '\0';
     } else if (scancode == CAPSLOCK) {
+        if (capslock_toogle == true) {
+            capslock_toogle = false;
+        } else {
+            capslock_toogle = true;
+        }
+    } else if (scancode == LSHIFT_PUSH) {
+        if (capslock_toogle == true) {
+            capslock_toogle = false;
+        } else {
+            capslock_toogle = true;
+        }
+    } else if (scancode == LSHIFT_RELEASE) {
         if (capslock_toogle == true) {
             capslock_toogle = false;
         } else {

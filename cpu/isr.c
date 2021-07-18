@@ -128,6 +128,7 @@ void isr_handler(registers_t r) {
 
 void register_interrupt_handler(u8 n, isr_t handler) {
     interrupt_handlers[n] = handler;
+    kprint("dupa");
 }
 
 void irq_handler(registers_t r) {
