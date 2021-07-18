@@ -18,6 +18,9 @@ typedef enum
 #define LSHIFT_PUSH 0x2A
 #define LSHIFT_RELEASE LSHIFT_PUSH+0x80
 
+#define RSHIFT_PUSH 0x36
+#define RSHIFT_RELEASE RSHIFT_PUSH+0x80
+
 static char key_buffer[256];
 
 bool capslock_toogle = false;
@@ -55,19 +58,11 @@ static void keyboard_callback(registers_t regs) {
         kprint("\n");
         user_input(key_buffer); /* kernel-controlled function */
         key_buffer[0] = '\0';
-    } else if (scancode == CAPSLOCK) {
-        if (capslock_toogle == true) {
-            capslock_toogle = false;
-        } else {
-            capslock_toogle = true;
-        }
-    } else if (scancode == LSHIFT_PUSH) {
-        if (capslock_toogle == true) {
-            capslock_toogle = false;
-        } else {
-            capslock_toogle = true;
-        }
-    } else if (scancode == LSHIFT_RELEASE) {
+    } else if (scancode == CAPSLOCK || 
+            scancode == LSHIFT_PUSH ||
+            scancode == LSHIFT_RELEASE ||
+            scancode == RSHIFT_PUSH ||
+            scancode == RSHIFT_RELEASE) {
         if (capslock_toogle == true) {
             capslock_toogle = false;
         } else {
@@ -84,7 +79,6 @@ static void keyboard_callback(registers_t regs) {
         char str[2] = {letter, '\0'};
         append(key_buffer, letter);
         kprint(str);
-        
     }
     UNUSED(regs);
 }
