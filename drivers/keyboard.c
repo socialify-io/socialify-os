@@ -5,11 +5,7 @@
 #include "../libc/string.h"
 #include "../libc/function.h"
 #include "../kernel/kernel.h"
-
-typedef enum
-{
-    true=1, false=0
-}bool;
+#include "../libc/bool.h"
 
 #define BACKSPACE 0x0E
 #define ENTER 0x1C
@@ -33,6 +29,8 @@ int toUpper(int ch)
     return(ch);
 }
 
+int user_input_actual_char;
+
 #define SC_MAX 58
 const char *sc_name[] = { "ERROR", "Esc", "1", "2", "3", "4", "5", "6", 
     "7", "8", "9", "0", "-", "=", "Backspace", "Tab", "Q", "W", "E", 
@@ -52,12 +50,16 @@ static void keyboard_callback(registers_t regs) {
     u8 scancode = port_byte_in(0x60);
     
     if (scancode == BACKSPACE) {
-        backspace(key_buffer);
-        kprint_backspace();
+        if (user_input_actual_char > 0)  {
+            backspace(key_buffer);
+            kprint_backspace();
+            user_input_actual_char--;
+        }
     } else if (scancode == ENTER) {
         kprint("\n");
         user_input(key_buffer); /* kernel-controlled function */
         key_buffer[0] = '\0';
+        user_input_actual_char = 0;
     } else if (scancode == CAPSLOCK || 
             scancode == LSHIFT_PUSH ||
             scancode == LSHIFT_RELEASE ||
@@ -80,6 +82,7 @@ static void keyboard_callback(registers_t regs) {
         char str[2] = {letter, '\0'};
         append(key_buffer, letter);
         kprint(str);
+        user_input_actual_char++;
     }
     UNUSED(regs);
 }
