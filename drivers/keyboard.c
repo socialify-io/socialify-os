@@ -69,6 +69,7 @@ static void keyboard_callback(registers_t regs) {
             capslock_toogle = true;
         }
     } else {
+        if (scancode > SC_MAX) return;
         char letter = sc_ascii[(int)scancode];
         /* Remember that kprint only accepts char[] */
         
