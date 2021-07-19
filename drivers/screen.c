@@ -1,11 +1,12 @@
 #include "screen.h"
 #include "../cpu/ports.h"
 #include "../libc/mem.h"
+#include "keyboard.h"
 
 /* Declaration of private functions */
 int get_cursor_offset();
 void set_cursor_offset(int offset);
-int print_char(char c, int col, int row, char attr);
+int print_char(char c, int col, int row, int user_input_max_char, int user_input_actual_char, char attr);
 int get_offset(int col, int row);
 int get_offset_row(int offset);
 int get_offset_col(int offset);
@@ -32,7 +33,7 @@ void kprint_at(char *message, int col, int row) {
     /* Loop through message and print it */
     int i = 0;
     while (message[i] != 0) {
-        offset = print_char(message[i++], col, row, WHITE_ON_BLACK);
+        offset = print_char(message[i++], col, row, 0, 0, WHITE_ON_BLACK);
         /* Compute row/col for next iteration */
         row = get_offset_row(offset);
         col = get_offset_col(offset);
@@ -43,11 +44,23 @@ void kprint(char *message) {
     kprint_at(message, -1, -1);
 }
 
-void kprint_backspace() {
+void kprint_backspace(int user_input_max_char, int user_input_actual_char) {
     int offset = get_cursor_offset()-2;
     int row = get_offset_row(offset);
     int col = get_offset_col(offset);
-    print_char(0x08, col, row, WHITE_ON_BLACK);
+    print_char(0x08, col, row, user_input_max_char, user_input_actual_char, WHITE_ON_BLACK);
+}
+
+void cursor_left() {
+    int offset = get_cursor_offset()-2;
+
+    set_cursor_offset(offset);
+}
+
+void cursor_right() {
+    int offset = get_cursor_offset()+2;
+
+    set_cursor_offset(offset);
 }
 
 
@@ -64,7 +77,7 @@ void kprint_backspace() {
  * Returns the offset of the next character
  * Sets the video cursor to the returned offset
  */
-int print_char(char c, int col, int row, char attr) {
+int print_char(char c, int col, int row, int user_input_max_char, int user_input_actual_char, char attr) {
     u8 *vidmem = (u8*) VIDEO_ADDRESS;
     if (!attr) attr = WHITE_ON_BLACK;
 
@@ -83,8 +96,15 @@ int print_char(char c, int col, int row, char attr) {
         row = get_offset_row(offset);
         offset = get_offset(0, row+1);
     } else if (c == 0x08) { /* Backspace */
-        vidmem[offset] = ' ';
-        vidmem[offset+1] = attr;
+        //vidmem[offset] = vidmem[offset+2];
+
+
+        //vidmem[offset+1] = attr;set+1
+        //if (vidmem[offset+1] != '\0') {
+        for (int i=0; i+user_input_actual_char<offset+user_input_max_char; i++) {
+            vidmem[offset+i] = vidmem[offset+i+2];
+        }
+        //}
     } else {
         vidmem[offset] = c;
         vidmem[offset+1] = attr;

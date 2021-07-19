@@ -22,6 +22,9 @@
 
 static char key_buffer[256];
 
+int user_input_actual_char;
+int user_input_max_char;
+
 bool capslock_toogle = false;
 
 int toUpper(int ch)
@@ -31,8 +34,6 @@ int toUpper(int ch)
     else
     return(ch);
 }
-
-int user_input_actual_char;
 
 #define SC_MAX 61
 const char *sc_name[] = { "ERROR", "Esc", "1", "2", "3", "4", "5", "6", 
@@ -55,8 +56,9 @@ static void keyboard_callback(registers_t regs) {
     if (scancode == BACKSPACE) {
         if (user_input_actual_char > 0)  {
             backspace(key_buffer);
-            kprint_backspace();
+            kprint_backspace(user_input_max_char, user_input_actual_char);
             user_input_actual_char--;
+            user_input_max_char--;
         }
     } else if (scancode == ENTER) {
         kprint("\n");
@@ -74,9 +76,15 @@ static void keyboard_callback(registers_t regs) {
             capslock_toogle = true;
         }
     } else if (scancode == LEFT_ARROW) {
-        kprint("\nLEFT ARROW PUSHED\n");
+        if (user_input_actual_char > 0)  {
+            cursor_left();
+            user_input_actual_char--;
+        }
     } else if (scancode == RIGHT_ARROW) {
-        kprint("\nRIGHT ARROW PUSHED\n");
+        if (user_input_actual_char < user_input_max_char)  {
+            cursor_right();
+            user_input_actual_char++;
+        }
     } else {
         if (scancode > SC_MAX) return;
         char letter = sc_ascii[(int)scancode];
@@ -90,6 +98,7 @@ static void keyboard_callback(registers_t regs) {
         append(key_buffer, letter);
         kprint(str);
         user_input_actual_char++;
+        user_input_max_char++;
     }
     UNUSED(regs);
 }
