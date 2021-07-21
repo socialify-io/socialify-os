@@ -96,7 +96,7 @@ static void keyboard_callback(registers_t regs) {
 
         char str[2] = {letter, '\0'};
         append(key_buffer, letter);
-        kprint(str);
+        kprint_user(str, user_input_max_char, user_input_actual_char);
         user_input_actual_char++;
         user_input_max_char++;
     }

@@ -19,7 +19,7 @@ int get_offset_col(int offset);
  * Print a message on the specified location
  * If col, row, are negative, we will use the current offset
  */
-void kprint_at(char *message, int col, int row) {
+void kprint_at(char *message, int col, int row, int user_input_max_char, int user_input_actual_char) {
     /* Set cursor if col/row are negative */
     int offset;
     if (col >= 0 && row >= 0)
@@ -33,7 +33,7 @@ void kprint_at(char *message, int col, int row) {
     /* Loop through message and print it */
     int i = 0;
     while (message[i] != 0) {
-        offset = print_char(message[i++], col, row, 0, 0, WHITE_ON_BLACK);
+        offset = print_char(message[i++], col, row, user_input_max_char, user_input_actual_char, WHITE_ON_BLACK);
         /* Compute row/col for next iteration */
         row = get_offset_row(offset);
         col = get_offset_col(offset);
@@ -41,7 +41,11 @@ void kprint_at(char *message, int col, int row) {
 }
 
 void kprint(char *message) {
-    kprint_at(message, -1, -1);
+    kprint_at(message, -1, -1, 0, 0);
+}
+
+void kprint_user(char *message, int user_input_max_char, int user_input_actual_char) {
+    kprint_at(message, -1, -1,user_input_max_char, user_input_actual_char);
 }
 
 void kprint_backspace(int user_input_max_char, int user_input_actual_char) {
@@ -92,29 +96,37 @@ int print_char(char c, int col, int row, int user_input_max_char, int user_input
     if (col >= 0 && row >= 0) offset = get_offset(col, row);
     else offset = get_cursor_offset();
 
-    if (c == '\n') {
+    if (c == '\n') { /* Enter */
         row = get_offset_row(offset);
         offset = get_offset(0, row+1);
+
     } else if (c == 0x08) { /* Backspace */
-        //vidmem[offset] = vidmem[offset+2];
-
-
-        //vidmem[offset+1] = attr;set+1
-        //if (vidmem[offset+1] != '\0') {
         for (int i=0; i+user_input_actual_char<offset+user_input_max_char; i++) {
             vidmem[offset+i] = vidmem[offset+i+2];
         }
-        //}
-    } else {
-        vidmem[offset] = c;
-        vidmem[offset+1] = attr;
+
+    } else { /* New char */
+        if (user_input_max_char != 0 || user_input_actual_char != user_input_max_char) {
+            for (int i=2*(user_input_max_char-user_input_actual_char); i>=0; i-=2) {
+                vidmem[offset+i+2] = vidmem[offset+i];
+            }
+
+            vidmem[offset] = c;
+        } else {
+            vidmem[offset] = c;
+            vidmem[offset+1] = attr;
+        }
+
+        //vidmem[offset] = c;
+        //vidmem[offset+1] = attr;
         offset += 2;
+
     }
 
     /* Check if the offset is over screen size and scroll */
     if (offset >= MAX_ROWS * MAX_COLS * 2) {
         int i;
-        for (i = 1; i < MAX_ROWS; i++) 
+        for (i = 1; i < MAX_ROWS; i++)
             memory_copy((u8*)(get_offset(0, i) + VIDEO_ADDRESS),
                         (u8*)(get_offset(0, i-1) + VIDEO_ADDRESS),
                         MAX_COLS * 2);

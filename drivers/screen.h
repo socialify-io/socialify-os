@@ -15,8 +15,9 @@
 
 /* Public kernel API */
 void clear_screen();
-void kprint_at(char *message, int col, int row);
+void kprint_at(char *message, int col, int row, int user_input_max_char, int user_input_actual_char);
 void kprint(char *message);
+void kprint_user(char *message, int user_input_max_char, int user_input_actual_char);
 void kprint_backspace();
 void cursor_left();
 void cursor_right();
