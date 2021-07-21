@@ -117,8 +117,6 @@ int print_char(char c, int col, int row, int user_input_max_char, int user_input
             vidmem[offset+1] = attr;
         }
 
-        //vidmem[offset] = c;
-        //vidmem[offset+1] = attr;
         offset += 2;
 
     }
