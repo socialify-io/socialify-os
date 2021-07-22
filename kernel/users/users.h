@@ -2,6 +2,6 @@
 #define USERS_H
 
 /* Public API functions */
-void users_command_handler(char *input);
+void users_command_handler(char *command);
 
 #endif

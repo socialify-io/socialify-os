@@ -1,70 +1,63 @@
 #include "users.h"
 #include "../../drivers/screen.h"
+#include "../../libc/string.h"
 
-#define COMMAND_LENGTH 5
+#define COMMAND_LENGTH 4
 
 /**
- * User command struct : user <operation> [attributes]
+ * User command struct : user <operation> -[attributes]
  */
-void users_command_handler(char *input) {
-    char *operation;
-    int input_length = sizeof(input);
+void users_command_handler(char *command) {
+    /**
+     * Getting amount of given parameters
+     */
+    int amount_of_operations = 0;
+    int amount_of_attributes = 0;
+    int i = 0;
 
-    //int i=COMMAND_LENGTH;
-    int j=0;
-    for (int i=COMMAND_LENGTH; i>=input_length; i++) {
-        if (input[i] == ' ' || input[i] == '\0') {
-            operation[j] = '\0';
-            break;
-        } else {
-            operation[j] = input[i];
-            j++;
+    while (command[i] != '\0') {
+        if (command[i] == ' ' && command[i+1] != ' ' && command[i+1] != '\0') {
+            if (command[i+1] == '-') {
+                amount_of_attributes++;
+            } else {
+                amount_of_operations++;
+            }
         }
+        i++;
     }
 
-    // do {
-    //     operation[j] = input[i];
-    //     kprint("dupa");
-    //     i++;
-    //     j++;
-    // } while (input[i] != ' ' || input[i] != '\0');
+    /**
+     * Getting given parameters
+     */
+    char operations[amount_of_operations][256];
+    char attributes[amount_of_attributes][256];
 
-    operation[j] = '\0';
+    int actual_number_of_operation = 0;
+    int actual_number_of_attribute = 0;
 
-    kprint("\nOPERATION: ");
-    kprint(operation);
-
-    // int operation_length = sizeof(operation);
-    // char **attributes;
-    // j=0;
-    // int k=0;
-
-    // for (int i=COMMAND_LENGTH+operation_length; i>=input_length; i++) {
-    //     if (input[i] == ' ') {
-    //         attributes[k][j] = '\0';
-    //         kprint("\n");
-    //         kprint(attributes[k]);
-    //         k++;
-    //     } else if (input[i] == '\0') {
-    //         attributes[k][j] = '\0';
-    //         break;
-    //     } else {
-    //         attributes[k][j] = input[i];
-    //         j++;
-    //     }
-    // }
-
-    // kprint("\nATTRIBUTES: ");
-    // kprint(attributes[0]);
-
-    // while (input[i] != '\0') {
-    //     while (input[i] != ' ' || input[i] != '\0') {
-    //         attributes[k][j] = input[i];
-    //         i++;
-    //         j++;
-    //     }
-    //     attributes[k][j+1] = '\0';
-    //     k++;
-    // }
-
+    i = COMMAND_LENGTH;
+    
+    while (command[i] != '\0') {
+        if (command[i] == ' ' && command[i+1] != ' ' && command[i+1] != '\0') {
+            if (command[i+1] == '-') {
+                int j = 0;
+                i+=2;
+                while (command[i] != ' ' && command[i] != '\0') {
+                    attributes[actual_number_of_attribute][j] = command[i];
+                    i++;
+                    j++;
+                }
+                actual_number_of_attribute++;
+            } else {
+                int j = 0;
+                i++;
+                while (command[i] != ' ' && command[i] != '\0') {
+                    operations[actual_number_of_operation][j] = command[i];
+                    i++;
+                    j++;
+                }
+                actual_number_of_operation++;
+            }
+        } else i++;
+    }
 }

@@ -21,7 +21,7 @@
 #define LEFT_ARROW 0x4B
 #define RIGHT_ARROW 0x4D
 
-static char key_buffer[256];
+char *key_buffer;
 
 int user_input_actual_char;
 int user_input_max_char;
@@ -71,11 +71,7 @@ static void keyboard_callback(registers_t regs) {
             scancode == LSHIFT_RELEASE ||
             scancode == RSHIFT_PUSH ||
             scancode == RSHIFT_RELEASE) {
-        if (capslock_toogle == true) {
-            capslock_toogle = false;
-        } else {
-            capslock_toogle = true;
-        }
+        capslock_toogle = !capslock_toogle;
     } else if (scancode == LEFT_ARROW) {
         if (user_input_actual_char > 0)  {
             cursor_left();
@@ -106,5 +102,6 @@ static void keyboard_callback(registers_t regs) {
 
 
 void init_keyboard() {
-   register_interrupt_handler(IRQ1, keyboard_callback); 
+    key_buffer[0] = '\0';
+    register_interrupt_handler(IRQ1, keyboard_callback); 
 }
