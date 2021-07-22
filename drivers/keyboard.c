@@ -6,6 +6,7 @@
 #include "../libc/function.h"
 #include "../kernel/kernel.h"
 #include "../libc/bool.h"
+#include "../kernel/shell/shell.h"
 
 #define BACKSPACE 0x0E
 #define ENTER 0x1C

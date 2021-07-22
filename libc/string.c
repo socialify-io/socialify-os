@@ -1,6 +1,8 @@
 #include "string.h"
 #include "../cpu/type.h"
 
+#define NULL ((char *)0)
+
 /**
  * K&R implementation
  */
