@@ -22,7 +22,6 @@ void users_command_handler(char *input) {
         }
     }
 
-
     // do {
     //     operation[j] = input[i];
     //     kprint("dupa");
@@ -55,6 +54,8 @@ void users_command_handler(char *input) {
     //     }
     // }
 
+    // kprint("\nATTRIBUTES: ");
+    // kprint(attributes[0]);
 
     // while (input[i] != '\0') {
     //     while (input[i] != ' ' || input[i] != '\0') {

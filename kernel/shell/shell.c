@@ -14,6 +14,7 @@ void user_input(char *input) {
 
     for (int i=0; i<=input_length; i++) {
         if (input[i] == ' ' || input[i] == '\0') {
+            input_command[i] = '\0';
             break;
         } else {
             input_command[i] = input[i];
