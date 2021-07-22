@@ -65,6 +65,7 @@ static void keyboard_callback(registers_t regs) {
         user_input(key_buffer); /* kernel-controlled function */
         key_buffer[0] = '\0';
         user_input_actual_char = 0;
+        user_input_max_char = 0;
     } else if (scancode == CAPSLOCK || 
             scancode == LSHIFT_PUSH ||
             scancode == LSHIFT_RELEASE ||
