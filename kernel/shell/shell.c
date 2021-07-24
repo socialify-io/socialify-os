@@ -30,7 +30,7 @@ void user_input(char *input) {
         clear_screen();
     } else if (strcmp(input_command, "user") == 0) {
         char *command = input;
-        users_command_handler(command);
+        users_command_parser(command);
     } else {
         kprint("Command not found. Type \"help\" to get list of commands.");
     }
