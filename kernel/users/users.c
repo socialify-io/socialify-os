@@ -4,13 +4,13 @@
 #include "../../libc/mem.h"
 #include "../../libc/bool.h"
 #include "../../libc/dict.h"
+#include "new_user/new_user.h"
+#include "models/models.h"
 
 #define COMMAND_LENGTH 4
 
-struct NewUser {
-    char username[50];
-    char password[50];
-} new_user;
+#define ATTRIBUTE 0
+#define VALUE 1
 
 /* Declaration of private functions */
 void user_command_handler(int amount_of_attributes, char operation[256], char attributes[amount_of_attributes][2][256]);
@@ -100,10 +100,17 @@ void user_command_handler(int amount_of_attributes, char operation[256], char at
         struct NewUser new_user;
 
         for (int i=0; i<amount_of_attributes; i++) {
-            kprint("\nATTRIBUTE: "); kprint(attributes[i][0]);
-            kprint("\nVALUE: "); kprint(attributes[i][1]);
-            kprint("\n");
+            if (strcmp(attributes[i][ATTRIBUTE], "username") == 0) {
+                strcpy(new_user.username, attributes[i][VALUE]);
+            } else if (strcmp(attributes[i][ATTRIBUTE], "password") == 0) {
+                strcpy(new_user.password, attributes[i][VALUE]);
+            } else {
+                kprint("\nAttribute "); kprint(attributes[i][0]); kprint(" is not recognized."); 
+                return;
+            }
         }
+
+        create_new_user(new_user);
     } else if (strcmp(operation, "list") == 0) {
         kprint("\nDisplaying list of users...");
     } else {
