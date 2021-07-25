@@ -17,6 +17,9 @@ void int_to_ascii(int n, char str[]) {
     if (sign < 0) str[i++] = '-';
     str[i] = '\0';
 
+    i = 0;
+    sign = 0;
+
     reverse(str);
 }
 
@@ -48,6 +51,9 @@ void reverse(char s[]) {
         s[i] = s[j];
         s[j] = c;
     }
+    c = 0;
+    i = 0;
+    j = 0;
 }
 
 /* K&R */
@@ -61,11 +67,13 @@ void append(char s[], char n) {
     int len = strlen(s);
     s[len] = n;
     s[len+1] = '\0';
+    len = 0;
 }
 
 void backspace(char s[]) {
     int len = strlen(s);
     s[len-1] = '\0';
+    len = 0;
 }
 
 /* K&R 
@@ -75,5 +83,6 @@ int strcmp(char s1[], char s2[]) {
     for (i = 0; s1[i] == s2[i]; i++) {
         if (s1[i] == '\0') return 0;
     }
+    i = 0;
     return s1[i] - s2[i];
 }

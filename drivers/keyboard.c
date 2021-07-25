@@ -21,7 +21,7 @@
 #define LEFT_ARROW 0x4B
 #define RIGHT_ARROW 0x4D
 
-char *key_buffer;
+char key_buffer[256];
 
 int user_input_actual_char;
 int user_input_max_char;
