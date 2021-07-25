@@ -7,8 +7,13 @@
 
 #define COMMAND_LENGTH 4
 
+struct NewUser {
+    char username[50];
+    char password[50];
+} new_user;
+
 /* Declaration of private functions */
-void user_command_handler(char operation[256], char attributes[][2][256]);
+void user_command_handler(int amount_of_attributes, char operation[256], char attributes[amount_of_attributes][2][256]);
 
 /**********************************************************
  * Public Kernel API functions                            *
@@ -80,7 +85,7 @@ void users_command_parser(char *command) {
         } else i++;
     }
 
-    user_command_handler(operation, attributes);
+    user_command_handler(amount_of_attributes, operation, attributes);
     memory_set(&command[0], 0, sizeof(command));
     memory_set(&operation[0], 0, sizeof(operation));
     memory_set(&attributes[0][0][0], 0, sizeof(attributes));
@@ -90,9 +95,15 @@ void users_command_parser(char *command) {
  * Private kernel functions                               *
  **********************************************************/
 
-void user_command_handler(char operation[256], char attributes[][2][256]) {
+void user_command_handler(int amount_of_attributes, char operation[256], char attributes[amount_of_attributes][2][256]) {
     if (strcmp(operation, "new") == 0) {
-        kprint(attributes[0][1]);
+        struct NewUser new_user;
+
+        for (int i=0; i<amount_of_attributes; i++) {
+            kprint("\nATTRIBUTE: "); kprint(attributes[i][0]);
+            kprint("\nVALUE: "); kprint(attributes[i][1]);
+            kprint("\n");
+        }
     } else if (strcmp(operation, "list") == 0) {
         kprint("\nDisplaying list of users...");
     } else {
