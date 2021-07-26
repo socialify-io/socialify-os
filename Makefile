@@ -4,10 +4,20 @@ HEADERS = $(wildcard kernel/*.h kernel/shell/*.h kernel/users/*.h kernel/users/m
 OBJ = ${C_SOURCES:.c=.o cpu/interrupt.o}
 
 # Change this if your cross-compiler is somewhere else
-CC = i386-elf-gcc
-GDB = i386-elf-gdb
 # -g: Use debugging symbols in gcc
-CFLAGS = -g -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs
+UNAME := ${shell uname}
+
+ifeq ($(UNAME),Linux)
+	CC = gcc
+	GDB = i386-elf-gdb
+	LD = ld -m elf_i386
+	CFLAGS = -g -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -fno-pic
+else
+	CC = i386-elf-gcc
+	GDB = i386-elf-gdb
+	LD = i386-elf-ld
+	CFLAGS = -g -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs
+endif
 
 # First rule is run by default
 os-image.bin: boot/bootsect.bin kernel.bin
@@ -16,11 +26,11 @@ os-image.bin: boot/bootsect.bin kernel.bin
 # '--oformat binary' deletes all symbols as a collateral, so we don't need
 # to 'strip' them manually on this case
 kernel.bin: boot/kernel_entry.o ${OBJ}
-	i386-elf-ld -o $@ -Ttext 0x1000 $^ --oformat binary
+	${LD} -o $@ -Ttext 0x1000 $^ --oformat binary
 
 # Used for debugging purposes
 kernel.elf: boot/kernel_entry.o ${OBJ}
-	i386-elf-ld -o $@ -Ttext 0x1000 $^ 
+	${LD} -o $@ -Ttext 0x1000 $^ 
 
 run: os-image.bin
 	qemu-system-i386 -fda os-image.bin
