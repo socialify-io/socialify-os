@@ -84,7 +84,33 @@ int strcmp(char s1[], char s2[]) {
         if (s1[i] == '\0') return 0;
     }
     i = 0;
-    return 1;
+    return s1[i] - s2[i];
+}
+
+char* strcpy(char* destination, const char* source)
+{
+    // return if no memory is allocated to the destination
+    if (destination == NULL) {
+        return NULL;
+    }
+ 
+    // take a pointer pointing to the beginning of the destination string
+    char *ptr = destination;
+ 
+    // copy the C-string pointed by source into the array
+    // pointed by destination
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+ 
+    // include the terminating null character
+    *destination = '\0';
+ 
+    // the destination is returned by standard `strcpy()`
+    return ptr;
 }
 
 char* strcpy(char* destination, const char* source)
