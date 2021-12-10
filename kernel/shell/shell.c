@@ -25,7 +25,7 @@ void user_input(char *input) {
         kprint("Stopping the CPU. Bye!\n");
         asm volatile("hlt");
     } else if (strcmp(input, "help") == 0) {
-        kprint("It's a prnak bro, nic tu kurwa nie znajdziesz, szach mat.\n");
+        kprint("Tutaj bedzie help.\n");
     } else if (strcmp(input, "clear") == 0) {
         clear_screen();
     } else if (strcmp(input_command, "user") == 0) {
